@@ -1,78 +1,87 @@
-const downloadCV = document.getElementById('downloadCV');
-const Contact = document.getElementById('Contact');
-const linkedin = document.getElementById('linkedin');
-const github = document.querySelector('#github');
-const mail = document.querySelector('#mail');
-const instgram = document.getElementById('instgram');
-const textMotion = document.getElementById('text_motion');
+const navDialog = document.getElementById('nav-dialog'); 
 
-/* =================== Text iterable ============== */
+function handleMenu(){
+    navDialog.classList.toggle('hidden');
+}
 
-const text = [
-    "Fronted Developer",
-    "FullStack Developer",
-    "Web Developer"
-] 
 
-let speed = 100;
+const initialTranslateLTR = -48*4;
+const initialTranslateRTL = 36*4;
 
-let textIndex = 0;
-let characterIndex = 0;
+function setupIntersectionObserver(element, isLTR, speed) {
 
-window.onload = typeWriter();
-
-function typeWriter() {
-
-    if(characterIndex < text[textIndex].length){
-        textMotion.innerHTML += text[textIndex].charAt(characterIndex);
-        characterIndex++;
-        setTimeout(typeWriter,speed);
-    }else {
-        setTimeout(eraseText,1000);
+    const intersectionCallback = (entries) => {
+    
+        const isIntersecting = entries[0].isIntersecting;
+    
+        if(isIntersecting) {
+            document.addEventListener('scroll', scrollHandler);
+        } else {
+            document.removeEventListener('scroll', scrollHandler);
+        }
+    
     }
-}
+    
+    const intersectionObserver = new IntersectionObserver(intersectionCallback);
 
-function eraseText() {
-    if(textMotion.innerHTML.length > 0){
-        textMotion.innerHTML = textMotion.innerHTML.slice(0,-1);
-        setTimeout(eraseText,50);
-    }else {
-        textIndex = (textIndex + 1) % text.length;
-        characterIndex = 0;
-        setTimeout(typeWriter,500);
+    intersectionObserver.observe(element);
+
+    function scrollHandler() {
+    
+        const translateX = (window.innerHeight - element.getBoundingClientRect().top) * speed;
+
+        let totalTranslate = 0;
+    
+        if(isLTR) {
+            totalTranslate = translateX + initialTranslateLTR;
+        } else {
+            totalTranslate = -(translateX + initialTranslateRTL);
+        }
+
+        element.style.transform = `translateX(${totalTranslate}px)`;
+    
     }
+
 }
 
-/* ========================= Click events of buttons & Icon ============================== */
+const line1 = document.getElementById('line1');
+const line2 = document.getElementById('line2');
+const line3 = document.getElementById('line3');
+const line4 = document.getElementById('line4');
 
-downloadCV.addEventListener('click', () => {
-    window.open('./assets/Shahzain khan.pdf');
+setupIntersectionObserver(line1, true, 0.15);
+setupIntersectionObserver(line2, false, 0.15);
+setupIntersectionObserver(line3, true, 0.15);
+setupIntersectionObserver(line4, true, 0.8);
+
+// ------------------------- Faq's Script ----------------------
+
+const dtElements = document.querySelectorAll('dt');
+
+dtElements.forEach(element => {
+
+    element.addEventListener('click', () => {
+
+        const ddArrowIcon = element.querySelectorAll('i')[0];
+        const ddId = element.getAttribute('aria-controls');
+        const ddElement = document.getElementById(ddId);
+
+        ddElement.classList.toggle('hidden');
+        ddArrowIcon.classList.toggle('-rotate-180');
+
+    })
+
 });
 
-Contact.addEventListener('click', () => {
-    location.href = "#contact"
-});
 
-linkedin.addEventListener('click', () => {
-    window.open('https://www.linkedin.com/in/shahzainkhan/')
-});
 
-github.addEventListener('click', () => {
-    window.open('https://github.com/Shahzain333')
-});
 
-instgram.addEventListener('click', () => {
-    window.open('https://www.instagram.com/shahzain._.niazi/profilecard/?igsh=MXNieTBkYzl6Mmd4Ng==')
-})
 
-mail.addEventListener('click', () => {
-    window.open('mailto:shahzainkhannaizi1234@gmail.com')
-})
 
-function toggleMenu(){
-    const menu = document.querySelector(".menu-links");
-    const icon = document.querySelector(".mobile-icon");
 
-    menu.classList.toggle("open");
-    icon.classList.toggle("open");
-}
+
+
+
+
+
+
